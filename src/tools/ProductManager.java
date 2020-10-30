@@ -22,18 +22,6 @@ public class ProductManager {
         product.setName(scan.nextLine());
         System.out.printf("Страна производства: ");
         product.setCountry(scan.nextLine());
-        int numQuantity;
-        do {            
-            System.out.printf("Количество: ");
-            String strQuantity = scan.nextLine();
-            try {
-                numQuantity = Integer.parseInt(strQuantity);
-                break;
-            } catch (Exception e) {
-                System.out.println("Используйте цифры!");
-            }
-        } while (true);
-        product.setQuantity(numQuantity);
         double numPrice;
         do {            
             System.out.printf("Стоимость: ");

@@ -15,16 +15,14 @@ import java.util.Objects;
 public class Product implements Serializable{
     private String name;
     private String country;
-    private Integer quantity;
     private Double price;
 
     public Product() {
     }
 
-    public Product(String name, String country, Integer quantity, Double price) {
+    public Product(String name, String country, Double price) {
         this.name = name;
         this.country = country;
-        this.quantity = quantity;
         this.price = price;
     }
 
@@ -44,14 +42,6 @@ public class Product implements Serializable{
         this.country = country;
     }
 
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
     public Double getPrice() {
         return price;
     }
@@ -65,7 +55,6 @@ public class Product implements Serializable{
         return "Product{" 
                 + "name=" + name 
                 + ", country=" + country 
-                + ", quantity=" + quantity 
                 + ", price=" + price + "€"
                 + " }";
     }
@@ -75,7 +64,6 @@ public class Product implements Serializable{
         int hash = 7;
         hash = 23 * hash + Objects.hashCode(this.name);
         hash = 23 * hash + Objects.hashCode(this.country);
-        hash = 23 * hash + Objects.hashCode(this.quantity);
         hash = 23 * hash + Objects.hashCode(this.price);
         return hash;
     }
@@ -96,9 +84,6 @@ public class Product implements Serializable{
             return false;
         }
         if (!Objects.equals(this.country, other.country)) {
-            return false;
-        }
-        if (!Objects.equals(this.quantity, other.quantity)) {
             return false;
         }
         if (!Objects.equals(this.price, other.price)) {
