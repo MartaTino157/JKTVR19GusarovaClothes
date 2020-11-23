@@ -5,9 +5,14 @@
  */
 package tools;
 
+import savers.FileSaver;
 import entity.Customer;
 import entity.Product;
 import entity.Purchase;
+import entity.facades.CustomerFacade;
+import entity.facades.ProductFacade;
+import entity.facades.PurchaseFacade;
+import factory.FacadeFactory;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -23,48 +28,45 @@ public class PurchaseManager {
     private Scanner scan = new Scanner(System.in);
     private CustomerManager customerManager = new CustomerManager();
     private ProductManager productManager = new ProductManager();
-    private StorageManager storageManager = new StorageManager();
     
-    public void makeDeal(List<Customer> listCustomers, List<Product> listProducts, List<Purchase> listPurchases){
+    private ProductFacade productFacade = FacadeFactory.getProductFacade();
+    private CustomerFacade customerFacade = FacadeFactory.getCustomerFacade();
+    private PurchaseFacade purchaseFacade = FacadeFactory.getPurchaseFacade();
+    
+    public void makeDeal(){
         System.out.println(" ***** СПИСОК ТОВАРОВ ***** ");
-        int productNum;
+        Long productNum;
         do {            
-            if(!productManager.printListProducts(listProducts)){
+            if(!productManager.printListProducts()){
             return;
             }
             System.out.printf("Выберите номер товара: ");
                 String productNumStr = scan.nextLine();
             try {
-                productNum = Integer.parseInt(productNumStr);
-                if(productNum < 1 && productNum >= listProducts.size()){
-                    throw new Exception("Выход за диапазон");
-                }
+                productNum = Long.parseLong(productNumStr);
                 break;
             } catch (Exception e) {
                 System.out.println("Выберите номер из указанного выше списка");
                 productNumStr = scan.nextLine();
             }
         } while (true);
-        Product product = listProducts.get(productNum-1);
+        Product product = productFacade.find(productNum);
         Customer customer = null;
         if(SecManager.role.MANAGER.toString().equals(App.loggedInUser.getRole())){
-            int customerNum;
+            Long customerNum;
             do {            
                 System.out.println(" ***** СПИСОК КЛИЕНТОВ ***** ");
-                customerManager.printListCustomers(listCustomers);
+                customerManager.printListCustomers();
                 System.out.printf("Выберите номер клиента: ");
                 String productNumStr = scan.nextLine();
                 try {
-                    customerNum = Integer.parseInt(productNumStr);
-                    if(customerNum < 1 && customerNum >= listCustomers.size()){
-                        throw new Exception();
-                    }
+                    customerNum = Long.parseLong(productNumStr);
                     break;
                 } catch (Exception e) {
                     System.out.println("Выберите номер из указанного выше списка");
                 }
             } while (true);
-            customer = listCustomers.get(productNum-1);
+            customer = customerFacade.find(customerNum);
         }else if (SecManager.role.CUSTOMER.toString().equals(App.loggedInUser.getRole())){
             customer = App.loggedInUser.getCustomer();
         }
@@ -79,45 +81,38 @@ public class PurchaseManager {
         }else{
             customer.setBalance(residual);
             Purchase purchase =  new Purchase(customer, product, calendar.getTime());
-            this.addPurchaseToArray(purchase, listPurchases);
+            purchaseFacade.create(purchase);
         }
     }
-    public void addPurchaseToArray(Purchase purchase, List<Purchase> listPurchases){
-        listPurchases.add(purchase);
-        storageManager.save(listPurchases, App.storageFile.PURCHASES.toString());
-    }
-    
-    public boolean printListPurchases(List<Purchase> listPurchases){
-        boolean notDeals = true;
+   
+    public boolean printListPurchases(){
         if(SecManager.role.MANAGER.toString().equals(App.loggedInUser.getRole())){
-            for (int i = 0; i < listPurchases.size(); i++) {
-                if(listPurchases.get(i)!=null)
-                    System.out.printf("%d. Клиент %s %s купил \"%s\"%n"
-                    ,i+1
-                    ,listPurchases.get(i).getCustomer().getFirstName()
-                    ,listPurchases.get(i).getCustomer().getLastName()
-                    ,listPurchases.get(i).getProduct().getName()
-                );
-                notDeals = false;
-            }
-            if(notDeals){
+            List<Purchase> listPurchases = purchaseFacade.findAll();
+            if(listPurchases == null){
                 System.out.println("Журнал покупок пуст");
                 return false;
+            }
+            for (int i = 0; i < listPurchases.size(); i++) {
+                System.out.printf("%d. Клиент %s %s купил \"%s\"%n"
+                ,listPurchases.get(i).getId()
+                ,listPurchases.get(i).getCustomer().getFirstName()
+                ,listPurchases.get(i).getCustomer().getLastName()
+                ,listPurchases.get(i).getProduct().getName()
+                );
             }
         }else if (SecManager.role.CUSTOMER.toString().equals(App.loggedInUser.getRole())){
-            for (int i = 0; i < listPurchases.size(); i++) {
-                if(listPurchases.get(i)!=null)
-                    System.out.printf("%d. Клиент %s %s купил \"%s\"%n"
-                    ,i+1
-                    ,listPurchases.get(i).getCustomer().getFirstName()
-                    ,listPurchases.get(i).getCustomer().getLastName()
-                    ,listPurchases.get(i).getProduct().getName()
-                );
-                notDeals = false;
-            }
-            if(notDeals){
+            List<Purchase> listPurchases = purchaseFacade.findAll(App.loggedInUser.getCustomer());
+            if(listPurchases == null){
                 System.out.println("Журнал покупок пуст");
                 return false;
+            }
+            for (int i = 0; i < listPurchases.size(); i++) {
+                System.out.printf("%d. Клиент %s %s купил \"%s\"%n"
+                ,listPurchases.get(i).getId()
+                ,listPurchases.get(i).getCustomer().getFirstName()
+                ,listPurchases.get(i).getCustomer().getLastName()
+                ,listPurchases.get(i).getProduct().getName()
+                );
             }
         }
     return true;

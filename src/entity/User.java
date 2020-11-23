@@ -7,15 +7,25 @@ package entity;
 
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 /**
  *
  * @author pupil
  */
+@Entity
 public class User implements Serializable{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String login;
     private String password;
     private String role;
+    @OneToOne
     private Customer customer;
 
     public User() {
@@ -26,6 +36,14 @@ public class User implements Serializable{
         this.password = password;
         this.role = role;
         this.customer = customer;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getLogin() {

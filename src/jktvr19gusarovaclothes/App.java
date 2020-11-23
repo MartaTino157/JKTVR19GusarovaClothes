@@ -5,18 +5,14 @@
  */
 package jktvr19gusarovaclothes;
 
-import tools.CustomerManager;
 import entity.Customer;
 import entity.Product;
 import entity.Purchase;
 import entity.User;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+import savers.BaseSaver;
 import security.SecManager;
-import tools.ProductManager;
-import tools.PurchaseManager;
-import tools.StorageManager;
+import savers.StorageManagerInterface;
 import ui.UserInterface;
 
 /**
@@ -26,44 +22,28 @@ import ui.UserInterface;
 public class App {
     
     public static enum storageFile{PRODUCTS,CUSTOMERS,PURCHASES,USERS};
-    
-    private List<Product> listProducts = new ArrayList<>();
-    private List<Customer> listCustomers = new ArrayList<>();
-    private List<Purchase> listPurchases = new ArrayList<>();
-    private List<User> listUsers = new ArrayList<>();
-    
-    private StorageManager storageManager = new StorageManager();
+//    private StorageManagerInterface storageManager = new FileSaver();
+    private StorageManagerInterface storageManager = new BaseSaver();
     
     public static User loggedInUser;
     
     public App() {
-        List<Product> loadedProducts = storageManager.load(App.storageFile.PRODUCTS.toString());
-        if(loadedProducts != null){
-            listProducts = loadedProducts;
-        }
-        List<Customer> loadedCustomers = storageManager.load(App.storageFile.CUSTOMERS.toString());
-        if(loadedCustomers != null){
-            listCustomers = loadedCustomers;
-        }
-        List<Purchase> loadedPurchases = storageManager.load(App.storageFile.PURCHASES.toString());
-        if(loadedPurchases != null){
-            listPurchases = loadedPurchases;
-        }
-        List<User> loadedUser = storageManager.load(App.storageFile.USERS.toString());
-        if(loadedUser != null){
-            listUsers = loadedUser;
-        }
+        System.out.println("Сохраняем данные в базу");
     }
     
     public void run() {
         System.out.println(" --- Добро пожаловать в магазин одежды! --- ");
         SecManager secManager = new SecManager();
-        App.loggedInUser = secManager.checkInlogin(listUsers, listCustomers);
+        App.loggedInUser = secManager.checkInlogin();
         UserInterface userInterface = new UserInterface();
+        if(App.loggedInUser == null){
+            System.out.println("У вас нет права доступа");
+            return; 
+        }
         if(SecManager.role.MANAGER.toString().equals(App.loggedInUser.getRole())){
-            userInterface.printManagerUI(listUsers, listCustomers, listProducts, listPurchases);
+            userInterface.printManagerUI();
         }else if(SecManager.role.CUSTOMER.toString().equals(App.loggedInUser.getRole())){
-            userInterface.printCustomerUI(listUsers, listCustomers, listProducts, listPurchases);
+            userInterface.printCustomerUI();
         }
     }
     

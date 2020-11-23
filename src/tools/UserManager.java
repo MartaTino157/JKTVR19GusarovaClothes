@@ -7,6 +7,9 @@ package tools;
 
 import entity.Customer;
 import entity.User;
+import entity.facades.CustomerFacade;
+import entity.facades.UserFacade;
+import factory.FacadeFactory;
 import java.util.List;
 import java.util.Scanner;
 import security.SecManager;
@@ -17,6 +20,8 @@ import security.SecManager;
  */
 public class UserManager {
     private Scanner scan = new Scanner(System.in);
+    private CustomerFacade customerFacade = FacadeFactory.getCustomerFacade();
+    private UserFacade userFacade = FacadeFactory.getUserFacade();
     
     public User createUser(){
         CustomerManager customerManager = new CustomerManager();
@@ -47,29 +52,21 @@ public class UserManager {
         } while (true);
         user.setRole(SecManager.role.values()[numRole-1].toString());
         user.setCustomer(customer);
+        userFacade.create(user);
         return user;
     }
     
-    public void addUserToArray(User user, List<User> listUsers) {
-        listUsers.add(user);
-    }
-    
-    public void printListUsers(List<User> listUsers) {
-        int n = 0;
-        for (User b : listUsers) {
-            if(b != null){
-                System.out.println(n+1+". "+b.toString());
-                n++;
-            }
-        }
-    }
-    
-    public User getCheckInUser(List<User> listUsers) {
+    public User getCheckInUser() {
         System.out.println("-----Вход в систему------");
         System.out.print("Login: ");
         String login = scan.nextLine();
         System.out.print("Password: ");
         String password = scan.nextLine();
+        List<User> listUsers = userFacade.findAll();
+        if(listUsers == null){
+            System.out.println("У вас нет права входа! Зарегистрируйтесь");
+            return null;
+        }
         for (int i = 0; i < listUsers.size(); i++) {
             if(listUsers.get(i) != null && listUsers.get(i).getLogin().equals(login)){
                 for (int j = 0; j < 2; j++) {

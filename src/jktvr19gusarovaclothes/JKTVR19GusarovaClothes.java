@@ -5,6 +5,10 @@
  */
 package jktvr19gusarovaclothes;
 
+import factory.ConnectSingleton;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+
 /**
  *
  * @author pupil
@@ -16,7 +20,19 @@ public class JKTVR19GusarovaClothes {
      */
     public static void main(String[] args) {
         App app = new App();
-        app.run();
+        try {
+            app.run();
+        } finally {
+            ConnectSingleton connect = ConnectSingleton.getInstance();
+            EntityManager em = connect.getEntityManager();
+            EntityManagerFactory emf = connect.getEntityManagerFactory();
+            if(em != null){
+                em.close();
+            }
+            if(emf != null){
+                emf.close();
+            }
+        }
     }
     
 }

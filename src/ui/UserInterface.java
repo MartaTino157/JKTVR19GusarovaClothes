@@ -25,9 +25,8 @@ public class UserInterface {
     private ProductManager productManager = new ProductManager();
     private CustomerManager customerManager = new CustomerManager();
     private PurchaseManager purchaseManager = new PurchaseManager();
-    private UserManager userManager = new UserManager();
     
-    public void printManagerUI(List<User> listUsers, List<Customer> listCustomers, List<Product> listProducts, List<Purchase> listPurchases){
+    public void printManagerUI(){
         boolean repeat = true;
         do {            
             System.out.println("=============================================");
@@ -50,35 +49,34 @@ public class UserInterface {
                 case "1":
                     System.out.println(" --- ДОБАВЛЕНИЕ ТОВАРА --- ");
                     Product product = productManager.createProduct();
-                    productManager.addProductToArray(product, listProducts);
                     break;
                 case "2":
                     System.out.println(" --- СПИСОК ТОВАРОВ --- ");
-                    productManager.printListProducts(listProducts);
+                    productManager.printListProducts();
                     break;
                 case "3":
                     System.out.println(" --- ДОБАВЛЕНИЕ ПОКУПАТЕЛЯ --- ");
-                    Customer customer = customerManager.createCustomer();
-                    customerManager.addCustomerToArray(customer, listCustomers);
+                    UserManager userManager = new UserManager();
+                    User user = userManager.createUser();
                     break;
                 case "4":
                     System.out.println(" --- СПИСОК ПОКУПАТЕЛЕЙ --- ");
-                    userManager.printListUsers(listUsers);
+                    customerManager.printListCustomers();
                     break;
                 case "5":
                     System.out.println(" --- СДЕЛАТЬ ПОКУПКУ --- ");
-                    purchaseManager.makeDeal(listCustomers, listProducts, listPurchases);
+                    purchaseManager.makeDeal();
                     break;
                 case "6":
                     System.out.println(" --- СПИСОК ПОКУПОК --- ");
-                    purchaseManager.printListPurchases(listPurchases);
+                    purchaseManager.printListPurchases();
                     break;
                 default:
                     System.out.println("Нет такой задачи!");
             }
         } while (repeat);
     }
-    public void printCustomerUI(List<User> listUsers, List<Customer> listCustomers, List<Product> listProducts, List<Purchase> listPurchases){
+    public void printCustomerUI(){
         boolean repeat = true;
         do {            
             System.out.println("=============================================");
@@ -97,15 +95,15 @@ public class UserInterface {
                     break;
                 case "1":
                     System.out.println(" --- СПИСОК ТОВАРОВ --- ");
-                    productManager.printListProducts(listProducts);
+                    productManager.printListProducts();
                     break;
                 case "2":
                     System.out.println(" --- СДЕЛАТЬ ПОКУПКУ --- ");
-                    purchaseManager.makeDeal(listCustomers, listProducts, listPurchases);
+                    purchaseManager.makeDeal();
                     break;
                 case "3":
                     System.out.println(" --- ЖУРНАЛ ПОКУПОК --- ");
-                    purchaseManager.printListPurchases(listPurchases);
+                    purchaseManager.printListPurchases();
                     break;
                 default:
                     System.out.println("Нет такой задачи!");

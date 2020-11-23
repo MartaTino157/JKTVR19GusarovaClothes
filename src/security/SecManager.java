@@ -5,13 +5,10 @@
  */
 package security;
 
-import entity.Customer;
 import entity.User;
-import java.util.List;
+import factory.FacadeFactory;
 import java.util.Scanner;
-import jktvr19gusarovaclothes.App;
 import tools.CustomerManager;
-import tools.StorageManager;
 import tools.UserManager;
 
 /**
@@ -22,11 +19,10 @@ public class SecManager {
     private Scanner scan = new Scanner(System.in);
     private UserManager userManager = new UserManager();
     private CustomerManager customerManager = new CustomerManager();
-    private StorageManager storageManager = new StorageManager();
     
     public static enum role {CUSTOMER, MANAGER};
     
-    public User checkInlogin(List<User> listUsers, List<Customer> listCustomers){
+    public User checkInlogin(){
         do {            
            System.out.println("Ваш выбор:");
            System.out.println("0. Закрыть программу");
@@ -41,13 +37,10 @@ public class SecManager {
                     break;
                 case "1":
                     User user = userManager.createUser();
-                    userManager.addUserToArray(user, listUsers);
-                    storageManager.save(listUsers, App.storageFile.USERS.toString());
-                    customerManager.addCustomerToArray(user.getCustomer(), listCustomers);
-                    storageManager.save(listCustomers, App.storageFile.CUSTOMERS.toString());
+                    new FacadeFactory().getUserFacade().create(user);
                     break;
                 case "2":
-                    User checkInUser = userManager.getCheckInUser(listUsers);
+                    User checkInUser = userManager.getCheckInUser();
                     if(checkInUser == null) break;
                     return checkInUser;
                 default:

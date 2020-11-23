@@ -6,15 +6,17 @@
 package tools;
 
 import entity.Customer;
+import entity.facades.CustomerFacade;
+import factory.FacadeFactory;
 import java.util.List;
 import java.util.Scanner;
-import jktvr19gusarovaclothes.App;
 
 /**
  *
  * @author pupil
  */
 public class CustomerManager {
+    private CustomerFacade customerFacade = FacadeFactory.getCustomerFacade();
     public Customer createCustomer(){
         Customer customer = new Customer();
         System.out.printf("Имя: ");
@@ -36,15 +38,12 @@ public class CustomerManager {
             }
         } while (true);
         customer.setBalance(numBalance);
+        customerFacade.create(customer);
         return customer;
     }
-    public void addCustomerToArray(Customer customer, List<Customer> listCustomers){
-        listCustomers.add(customer);
-        StorageManager storageManager = new StorageManager();
-        storageManager.save(listCustomers, App.storageFile.CUSTOMERS.toString());
-    }
-    public void printListCustomers(List<Customer> listCustomers){
-        if(listCustomers == null || listCustomers.size() < 1){
+    public void printListCustomers(){
+        List<Customer> listCustomers = customerFacade.findAll();
+        if(listCustomers == null){
             System.out.println("Список клиентов пуст!");
             return;
         }

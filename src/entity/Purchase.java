@@ -8,14 +8,28 @@ package entity;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
  * @author pupil
  */
+@Entity
 public class Purchase implements Serializable{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @OneToOne
     private Customer customer;
+    @OneToOne
     private Product product;
+    @Temporal(TemporalType.TIMESTAMP)
     private Date purchaseDate;
 
     public Purchase() {
@@ -25,6 +39,14 @@ public class Purchase implements Serializable{
         this.customer = customer;
         this.product = product;
         this.purchaseDate = purchaseDate;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Customer getCustomer() {

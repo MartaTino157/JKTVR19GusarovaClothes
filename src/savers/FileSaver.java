@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package tools;
+package savers;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,12 +17,11 @@ import java.util.List;
  *
  * @author pupil
  */
-public class StorageManager {
+public class FileSaver {
  
     public void save(List arrayList, String fileName){
         FileOutputStream fos = null;
         ObjectOutputStream oos = null;
-        
         try {
             fos = new FileOutputStream(fileName);
             oos = new ObjectOutputStream(fos);

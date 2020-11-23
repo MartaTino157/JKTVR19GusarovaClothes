@@ -5,7 +5,10 @@
  */
 package tools;
 
+import savers.FileSaver;
 import entity.Product;
+import entity.facades.ProductFacade;
+import factory.FacadeFactory;
 import java.util.List;
 import java.util.Scanner;
 import jktvr19gusarovaclothes.App;
@@ -15,6 +18,7 @@ import jktvr19gusarovaclothes.App;
  * @author pupil
  */
 public class ProductManager {
+    private ProductFacade productFacade = FacadeFactory.getProductFacade();
     public Product createProduct(){
         Product product = new Product();
         System.out.printf("Название товара: ");
@@ -34,16 +38,13 @@ public class ProductManager {
             }
         } while (true);
         product.setPrice(numPrice);
+        productFacade.create(product);
         return product;
     }
     
-    public void addProductToArray(Product product, List<Product> listProducts){
-        listProducts.add(product);
-        StorageManager storageManager = new StorageManager();
-        storageManager.save(listProducts, App.storageFile.PRODUCTS.toString());
-    }
-    public boolean printListProducts(List<Product> listProducts){
-        if(listProducts == null || listProducts.size() < 1){
+    public boolean printListProducts(){
+        List<Product> listProducts = productFacade.findAll();
+        if(listProducts == null){
             System.out.println("Полки пусты!");
             return false;
         }
